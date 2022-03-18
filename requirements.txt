@@ -1,0 +1,5 @@
+dydx-v3-python
+pandas
+numpy
+jupyter
+matplotlib

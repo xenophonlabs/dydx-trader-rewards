@@ -1,4 +1,5 @@
 dydx-v3-python
+ccxt
 pandas
 numpy
 jupyter

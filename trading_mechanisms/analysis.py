@@ -84,7 +84,7 @@ def plot3(R, p, alpha, open_interest):
     
     # With whales
     d_mkt, f_mkt = find_equilibrium(open_interest, \
-        n=1000, R=R, p=p, alpha=alpha, num_whales=10, whale_alpha=100_000)
+        n=1000, R=R, p=p, alpha=alpha, num_whales=10, whale_alpha=100)
     d_mkt, f_mkt = zip(*sorted(list(zip(d_mkt, f_mkt)), key=lambda x : x[1]) )
     y = func(d_mkt)
     err = (f_mkt - y)/f_mkt
@@ -99,7 +99,7 @@ def plot4(R, p, alpha, open_interest):
     fig, ax = plt.subplots(1,1,figsize=(10,5))
     
     sums = []
-    whale_alphas = [1_000_000, 100_000, 10_000, 1000, 100, 1]
+    whale_alphas = [10_000, 1000, 100, 10, 1]
     for whale_alpha in whale_alphas:
         _, f_mkt = find_equilibrium(open_interest, \
             n=1000, R=R, p=p, alpha=alpha, num_whales=10, whale_alpha=whale_alpha)
@@ -126,20 +126,20 @@ def plot5(R, p, alpha, open_interest):
     profits = profit_fast(f_mkt, d_mkt, T_mkt)
     results = sorted(list(zip(d_mkt, profits / f_mkt)), key=lambda x : x[1])
 
-    axs[0].plot(*zip(*results))
+    axs[0].scatter(*zip(*results))
     axs[0].set_xlabel("Open Interest")
     axs[0].set_ylabel("Non-Whale Profit")
     axs[0].set_title("Profit vs Open Interest without Whales")
 
     # With whales
     d_mkt, f_mkt = find_equilibrium(open_interest, \
-        n=1000, R=R, p=p, alpha=alpha, num_whales=10, whale_alpha=100_000)
+        n=1000, R=R, p=p, alpha=alpha, num_whales=10, whale_alpha=100)
     mkt_score = cur_mkt_score(d_mkt, f_mkt)
     T_mkt = mkt_score - f_mkt**0.7 * d_mkt**0.3
     profits = profit_fast(f_mkt, d_mkt, T_mkt) 
     results = sorted(list(zip(d_mkt, profits / f_mkt)), key=lambda x : x[1])
 
-    axs[1].plot(*zip(*results), color='red')
+    axs[1].scatter(*zip(*results), color='red')
     axs[1].set_ylabel("Whale Profit")
     axs[1].set_xlabel("Open Interest")
     axs[1].set_title("Profit vs Open Interest with Whales")
@@ -151,7 +151,7 @@ def plot6(R, p, alpha, open_interest):
     fig, axs = plt.subplots(1,1,figsize=(10,5))
 
     for G in [2000, 4000, 6000, 8000]:
-        d_mkt, f_mkt, g_mkt = find_equilibrium_stk(open_interest, G=G, n=1000, R=R, p=p, alpha=alpha)
+        d_mkt, f_mkt, g_mkt = find_equilibrium_stk(open_interest, G=G, n=1000, R=R, p=p, alpha=alpha, num_whales=10, whale_alpha=100)
         results = sorted(list(zip(d_mkt**0.28 * g_mkt**0.05, f_mkt**0.33)), key=lambda x : x[1])
         axs.plot(*zip(*results), label=f"G={G}")
     
@@ -196,11 +196,11 @@ def plot8(alpha):
         if epoch > 4:
             results[epoch] = find_equilibrium_stk(row['openInterest'], G=row['stakedDYDX'], \
                  n=row['numTraders'], R=row['totalRewards'], p=row['close'], alpha=alpha, \
-                     num_whales=10, whale_alpha=100_000)
+                     num_whales=10, whale_alpha=100)
         else:
             results[epoch] = find_equilibrium(row['openInterest'], \
                 n=row['numTraders'], R=row['totalRewards'], p=row['close'], alpha=alpha, \
-                     num_whales=10, whale_alpha=100_000)
+                     num_whales=10, whale_alpha=100)
 
     df['expected'] = [sum(results[epoch][1]) for epoch in results] # sum of fees
     axs.scatter(df['epoch'], df['fees'], label='fees')
@@ -215,37 +215,37 @@ def main():
     This creates all the tables and plot for our analysis.
     """
     R = 3_835_616
-    p = 20
+    p = 10
     alpha = 0.01
-    open_interest = 1_000_000_000
+    open_interest = 150_000_000
 
     # (1) Individual profit curve with black dot on maximum
-    # print("Generating plot 1... ")
-    # plot1(R, p, alpha, open_interest)
+    print("Generating plot 1... ")
+    plot1(R, p, alpha, open_interest)
 
     # (2) Side by side fees to open interest for large vs small varying n
-    # print("Generating plot 2... ")
-    # plot2(R, p, alpha, open_interest)
+    print("Generating plot 2... ")
+    plot2(R, p, alpha, open_interest)
 
     # (3) Percentage error of closed form with and without whales
-    # print("Generating plot 3... ")
-    # plot3(R, p, alpha, open_interest)
+    print("Generating plot 3... ")
+    plot3(R, p, alpha, open_interest)
 
     # (4) Bar chart sum of fees for increasing whale size
-    # print("Generating plot 4... ")
-    # plot4(R, p, alpha, open_interest)
+    print("Generating plot 4... ")
+    plot4(R, p, alpha, open_interest)
 
     # (5) Profit vs open interest with and without whales
-    # print("Generating plot 5... ")
-    # plot5(R, p, alpha, open_interest)
+    print("Generating plot 5... ")
+    plot5(R, p, alpha, open_interest)
     
     # (6) Plot normal G and plot where G = 0
-    # print("Generating plot 6... ")
-    # plot6(R, p, alpha, open_interest)
+    print("Generating plot 6... ")
+    plot6(R, p, alpha, open_interest)
     
     # (7) Plot actual data (price, fees, open interest)
-    # print("Generating plot 7... ")
-    # plot7()
+    print("Generating plot 7... ")
+    plot7()
 
     # (8) Plot of our predictions vs actual data
     print("Generating plot 8... ")

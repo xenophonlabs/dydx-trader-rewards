@@ -1,6 +1,5 @@
 import sympy as sp
 import numpy as np
-import random
 
 def dist(v1, v2):
     """
@@ -128,7 +127,7 @@ def find_equilibrium_stk(D, n=1000, R=3_835_616, p=20, alpha=.01, G=5_000, num_w
     # d_mkt = np.random.exponential(scale=(D/n), size=n)
     d_mkt = get_mkt(D, n, num_whales, whale_alpha)
     f_mkt = np.random.rand(n)*((1/25) * D)/n
-    g_mkt = get_mkt(G, n, 10, 100000)
+    g_mkt = get_mkt(G, n, num_whales, whale_alpha*10, fill=True)
     
     # simulate_market_optimal_fee_discovery, running until convergence
     rmses = [] # the distances between fees on successive iterations of the algorithm; should tend to 0 as f_mkt convergest
@@ -139,6 +138,10 @@ def find_equilibrium_stk(D, n=1000, R=3_835_616, p=20, alpha=.01, G=5_000, num_w
     
     check_equilibrium_stk(d_mkt, f_mkt, g_mkt, profit_prime_fast)
     return d_mkt, f_mkt, g_mkt
+
+###############
+### TESTING ###
+###############
 
 def check_equilibrium(d_mkt, f_mkt, profit_prime_fast):
     """

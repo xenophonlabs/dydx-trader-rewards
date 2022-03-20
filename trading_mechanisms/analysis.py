@@ -77,7 +77,7 @@ def plot3(R, p, alpha, open_interest):
     d_mkt, f_mkt = zip(*sorted(list(zip(d_mkt, f_mkt)), key=lambda x : x[1]) )
     y = func(d_mkt)
     err = (f_mkt - y)/f_mkt
-    axs[0].plot(d_mkt, err, color='red')
+    axs[0].scatter(d_mkt, err, color='red')
     axs[0].set_xlabel("Open Interest")
     axs[0].set_ylabel("Error")
     axs[0].set_title("Error without Whales", y=1.05)
@@ -88,7 +88,7 @@ def plot3(R, p, alpha, open_interest):
     d_mkt, f_mkt = zip(*sorted(list(zip(d_mkt, f_mkt)), key=lambda x : x[1]) )
     y = func(d_mkt)
     err = (f_mkt - y)/f_mkt
-    axs[1].plot(d_mkt, err, color='red')
+    axs[1].scatter(d_mkt, err, color='red')
     axs[1].set_xlabel("Open Interest")
     axs[1].set_title("Error with Whales", y=1.05)
     

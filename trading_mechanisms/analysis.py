@@ -128,7 +128,7 @@ def plot5(R, p, alpha, open_interest):
 
     axs[0].scatter(*zip(*results))
     axs[0].set_xlabel("Open Interest")
-    axs[0].set_ylabel("Non-Whale Profit")
+    axs[0].set_ylabel("Non-Whale Profit / Fees")
     axs[0].set_title("Profit vs Open Interest without Whales")
 
     # With whales
@@ -140,7 +140,7 @@ def plot5(R, p, alpha, open_interest):
     results = sorted(list(zip(d_mkt, profits / f_mkt)), key=lambda x : x[1])
 
     axs[1].scatter(*zip(*results), color='red')
-    axs[1].set_ylabel("Whale Profit")
+    axs[1].set_ylabel("Whale Profit / Fees")
     axs[1].set_xlabel("Open Interest")
     axs[1].set_title("Profit vs Open Interest with Whales")
     
@@ -150,14 +150,14 @@ def plot5(R, p, alpha, open_interest):
 def plot6(R, p, alpha, open_interest):
     fig, axs = plt.subplots(1,1,figsize=(10,5))
 
-    for G in [2000, 4000, 6000, 8000]:
+    for G in [1_000_000, 10_000_000, 100_000_000]:
         d_mkt, f_mkt, g_mkt = find_equilibrium_stk(open_interest, G=G, n=1000, R=R, p=p, alpha=alpha, num_whales=10, whale_alpha=100)
-        results = sorted(list(zip(d_mkt**0.28 * g_mkt**0.05, f_mkt**0.33)), key=lambda x : x[1])
-        axs.plot(*zip(*results), label=f"G={G}")
+        results = sorted(list(zip(d_mkt**0.28 * g_mkt**0.05, f_mkt)), key=lambda x : x[1])
+        axs.scatter(*zip(*results), label=f"G={G}")
     
     axs.legend()
     axs.set_xlabel("d_k^0.28 * g_k^0.05")
-    axs.set_ylabel("f_k^0.33")
+    axs.set_ylabel("Fees")
     axs.set_title("Distribution of Fees to Open Interest for varying G")
 
     fig.savefig(PATH + "plot6.png")

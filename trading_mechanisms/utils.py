@@ -96,14 +96,11 @@ def get_mkt(total, n, num_whales, whale_alpha, fill=False):
 
     return mkt
 
-def find_equilibrium(D, n=1000, R=3_835_616, p=20, alpha=.01, num_whales=0, whale_alpha=1):
+def find_equilibrium(D, n=1000, R=3_835_616, p=10, alpha=.01, num_whales=0, whale_alpha=1):
     """
     Warning: If leaning rate is too small or fees vector is initialized at very high amounts, 
     Newton's method can update fees as negative values. This will crash the algorithm. 
     To avoid this, lower the learning rate or instantiate the fees vector at smaller amounts.
-
-    Parameters:
-
     """
     profit_prime_fast, profit_prime_prime_fast = setup(R, p)
 
@@ -121,7 +118,7 @@ def find_equilibrium(D, n=1000, R=3_835_616, p=20, alpha=.01, num_whales=0, whal
     check_equilibrium(d_mkt, f_mkt, profit_prime_fast)
     return d_mkt, f_mkt
 
-def find_equilibrium_stk(D, n=1000, R=3_835_616, p=20, alpha=.01, G=5_000, num_whales=0, whale_alpha=1):
+def find_equilibrium_stk(D, n=1000, R=3_835_616, p=10, alpha=.01, G=5_000, num_whales=0, whale_alpha=1):
     profit_prime_fast, profit_prime_prime_fast = setup_stk(R, p)
 
     # d_mkt = np.random.exponential(scale=(D/n), size=n)

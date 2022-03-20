@@ -80,7 +80,7 @@ def plot3(R, p, alpha, open_interest):
     axs[0].plot(d_mkt, err, color='red')
     axs[0].set_xlabel("Open Interest")
     axs[0].set_ylabel("Error")
-    axs[0].set_title("Percentage Error without Whales", y=1.05)
+    axs[0].set_title("Error without Whales", y=1.05)
     
     # With whales
     d_mkt, f_mkt = find_equilibrium(open_interest, \
@@ -90,7 +90,7 @@ def plot3(R, p, alpha, open_interest):
     err = (f_mkt - y)/f_mkt
     axs[1].plot(d_mkt, err, color='red')
     axs[1].set_xlabel("Open Interest")
-    axs[1].set_title("Percentage Error with Whales", y=1.05)
+    axs[1].set_title("Error with Whales", y=1.05)
     
     fig.savefig(PATH + "plot3.png")
     return
@@ -227,7 +227,7 @@ def main():
     print("Generating plot 2... ")
     plot2(R, p, alpha, open_interest)
 
-    # (3) Percentage error of closed form with and without whales
+    # (3) Error of closed form with and without whales
     print("Generating plot 3... ")
     plot3(R, p, alpha, open_interest)
 

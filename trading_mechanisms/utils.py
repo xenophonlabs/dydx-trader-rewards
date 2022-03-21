@@ -28,6 +28,10 @@ def cur_mkt_score_stk(ds, fs, gs):
     return total
 
 def setup(R, p, analysis=False):
+    """
+    Generate the Sympy objects that perform the computation 
+    of the profit function and its derivatives. 
+    """
     f = sp.Symbol('f')
     d = sp.Symbol('d')
     T = sp.Symbol('T')
@@ -46,6 +50,10 @@ def setup(R, p, analysis=False):
     return profit_prime_fast, profit_prime_prime_fast
 
 def setup_stk(R, p):
+    """
+    Generate the Sympy objects that perform the computation 
+    of the profit function and its derivatives. 
+    """
     f = sp.Symbol('f')
     d = sp.Symbol('d')
     T = sp.Symbol('T')
@@ -62,6 +70,10 @@ def setup_stk(R, p):
     return profit_prime_fast, profit_prime_prime_fast
 
 def walk(alpha, d_mkt, f_mkt, profit_prime_fast, profit_prime_prime_fast):
+    """
+    Perform a single iteration of Newton's method on the fees 
+    vector F.
+    """
     mkt_score = cur_mkt_score(d_mkt, f_mkt)
     T_mkt = mkt_score - f_mkt**0.7 * d_mkt**0.3
 
@@ -72,6 +84,10 @@ def walk(alpha, d_mkt, f_mkt, profit_prime_fast, profit_prime_prime_fast):
     return new_f_mkt
 
 def walk_stk(alpha, d_mkt, f_mkt, g_mkt, profit_prime_fast, profit_prime_prime_fast):
+    """
+    Perform a single iteration of Newton's method on the fees 
+    vector F.
+    """
     mkt_score = cur_mkt_score_stk(d_mkt, f_mkt, g_mkt)
     T_mkt = mkt_score - f_mkt**0.67 * d_mkt**0.28 * g_mkt ** 0.05
 
@@ -98,7 +114,9 @@ def get_mkt(total, n, num_whales, whale_alpha, fill=False):
 
 def find_equilibrium(D, n=1000, R=3_835_616, p=10, alpha=.01, num_whales=0, whale_alpha=1):
     """
-    Warning: If leaning rate is too small or fees vector is initialized at very high amounts, 
+    Find Nash equilibrium given conditions specified by input parameters.
+
+    Warning: If learning rate is too small or fees vector is initialized at very high amounts, 
     Newton's method can update fees as negative values. This will crash the algorithm. 
     To avoid this, lower the learning rate or instantiate the fees vector at smaller amounts.
     """
@@ -119,6 +137,13 @@ def find_equilibrium(D, n=1000, R=3_835_616, p=10, alpha=.01, num_whales=0, whal
     return d_mkt, f_mkt
 
 def find_equilibrium_stk(D, n=1000, R=3_835_616, p=10, alpha=.01, G=5_000, num_whales=0, whale_alpha=1):
+    """
+    Find Nash equilibrium given conditions specified by input parameters.
+
+    Warning: If learning rate is too small or fees vector is initialized at very high amounts, 
+    Newton's method can update fees as negative values. This will crash the algorithm. 
+    To avoid this, lower the learning rate or instantiate the fees vector at smaller amounts.
+    """
     profit_prime_fast, profit_prime_prime_fast = setup_stk(R, p)
 
     # d_mkt = np.random.exponential(scale=(D/n), size=n)
@@ -161,3 +186,28 @@ def check_equilibrium_stk(d_mkt, f_mkt, g_mkt, profit_prime_fast):
     if not np.all((err <= 10e-2)):
         raise Exception("Newton's method did not find an equilibrium.")
     return True
+
+def check_profit(R, p, total_trader_score):
+    """
+    Get profit function
+    """
+    f = sp.Symbol('f')
+    d = sp.Symbol('d')
+
+    profit = R * p * d**0.3 * f**0.7 / total_trader_score - f  
+    profit_fast =  sp.lambdify([f, d], profit, "numpy")
+
+    return profit, profit_fast
+
+def check_profit_stk(R, p, total_trader_score):
+    """
+    Get profit function
+    """
+    f = sp.Symbol('f')
+    d = sp.Symbol('d')
+    g = sp.Symbol('g')
+
+    profit = R * p * d**0.28 * f**0.67 * g**0.05 / total_trader_score - f  
+    profit_fast =  sp.lambdify([f, d, g], profit, "numpy")
+
+    return profit, profit_fast

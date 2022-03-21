@@ -1,8 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import sympy as sp
-import random
+import matplotlib.ticker as mtick
 
 from utils import *
 
@@ -128,8 +127,9 @@ def plot5(R, p, alpha, open_interest):
 
     axs[0].scatter(*zip(*results))
     axs[0].set_xlabel("Open Interest")
-    axs[0].set_ylabel("Non-Whale Profit / Fees")
-    axs[0].set_title("Profit vs Open Interest without Whales")
+    axs[0].set_ylabel("Non-Whales Returns on Fees Spent")
+    axs[0].yaxis.set_major_formatter(mtick.PercentFormatter())
+    axs[0].set_title("Returns vs Open Interest without Whales")
 
     # With whales
     d_mkt, f_mkt = find_equilibrium(open_interest, \
@@ -140,10 +140,10 @@ def plot5(R, p, alpha, open_interest):
     results = sorted(list(zip(d_mkt, profits / f_mkt)), key=lambda x : x[1])
 
     axs[1].scatter(*zip(*results), color='red')
-    axs[1].set_ylabel("Whale Profit / Fees")
+    axs[1].set_ylabel("Whales Returns on Fees Spent")
     axs[1].set_xlabel("Open Interest")
-    axs[1].set_title("Profit vs Open Interest with Whales")
-    
+    axs[1].set_title("Returns vs Open Interest with Whales")
+    axs[1].yaxis.set_major_formatter(mtick.PercentFormatter())
     fig.savefig(PATH + "plot5.png")
     return
 
@@ -213,6 +213,30 @@ def plot8(alpha):
     fig.savefig(PATH + "plot8.png")
     return
 
+def plot9(open_interest, R, alpha):
+    fig, ax = plt.subplots(1, 1, figsize=(10, 5))
+
+    prices = [2.5, 5, 7.5, 10, 12.5, 15]
+    sums = []
+    for price in prices:
+        _, f_mkt = find_equilibrium(open_interest, n=1000, R=R, alpha=alpha, p=price, num_whales=10, whale_alpha=100)
+        sums.append(sum(f_mkt))
+
+    ax.scatter(prices, sums, label="Sum of Fees paid")
+    ax.set_xticks([2.5, 5, 7.5, 10, 12.5, 15])
+
+    x = np.linspace(2.5, 15, 100)
+    y = x * 0.7 * R
+    ax.plot(x, y, color="red", label="0.7Rp")
+
+    ax.legend()
+    ax.set_title('Fees Paid by DYDX Token Price')
+    ax.set_ylabel('Fees Paid')
+    ax.set_xlabel('DYDX Price')
+
+    fig.savefig(PATH + "plot9.png")
+    return
+
 def main():
     """
     This creates all the tables and plot for our analysis.
@@ -253,6 +277,10 @@ def main():
     # (8) Plot of our predictions vs actual data
     print("Generating plot 8... ")
     plot8(alpha)
+
+    # (9) Plot of our predictions vs actual data
+    print("Generating plot 9... ")
+    plot9(open_interest, R, alpha)
     
     return
 

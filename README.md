@@ -8,16 +8,13 @@ Most functions in `utils.py` have two versions, one which acounts to stakedDYDX 
 ### Newton's Method
 
 To simulate a trading rewards epoch use the `find_equilibrium(...)` function with appropriate parameters. This function uses Newton's method to update a fees vector <b>F</b> until it converges to a Nash equilibrium. A brief description of parameters follows:
-
-<ul>
-    <li>`D` is the total average open interest at the end of the epoch.</li>
-    <li>`n` is the total number of traders eligible for rewards.</li>
-    <li>`R` is the total rewards to be disbursed at the end of the epoch.</li>
-    <li>`p` is the price of DYDX token at the end of the epoch.</li>
-    <li>`alpha` is the learning rate which must be sufficiently small to ensure convergence.</li>
-    <li>`num_whales` is the number of market whales to generate.</li>
-    <li>`whale_alpha` is the weight for each whale in the Dirichlet probability density function.</li>
-</ul>
+* `D` is the total average open interest at the end of the epoch.
+* `n` is the total number of traders eligible for rewards.
+* `R` is the total rewards to be disbursed at the end of the epoch.
+* `p` is the price of DYDX token at the end of the epoch.
+* `alpha` is the learning rate which must be sufficiently small to ensure convergence.
+* `num_whales` is the number of market whales to generate.
+* `whale_alpha` is the weight for each whale in the Dirichlet probability density function.
 
 To simulate the Nash equilibrium fee vector for epoch 3, for example, we would run:
 

@@ -168,7 +168,7 @@ def plot7():
 
     df = pd.read_csv(__file__.replace("analysis.py", "data/historical.csv"))
 
-    axs[0].bar(df['epoch'], df['fees'], color='red')
+    axs[0].bar(df['epoch'], df['fees_epoch_review'], color='red')
     axs[0].set_title('Fees Paid')
     axs[0].set_ylabel('Fees Paid')
     axs[0].set_xlabel('epoch')
@@ -203,11 +203,11 @@ def plot8(alpha):
                      num_whales=10, whale_alpha=100)
 
     df['expected'] = [sum(results[epoch][1]) for epoch in results] # sum of fees
-    axs.scatter(df['epoch'], df['fees'], label='fees')
-    axs.scatter(df['epoch'], df['expected'], label='expected')
+    axs.scatter(df['epoch'], df['fees_epoch_review'], label='actual')
+    axs.scatter(df['epoch'], df['expected'], label='predicted')
     axs.set_ylabel("Sum of Fees Paid")
     axs.set_xlabel("Epoch")
-    axs.set_title("Predicted vs Actual sum of Fees Paid")
+    axs.set_title("Predicted and Actual Sum of Fees Paid")
     axs.legend()
 
     fig.savefig(PATH + "plot8.png")
@@ -222,33 +222,33 @@ def main():
     alpha = 0.01
     open_interest = 150_000_000
 
-    # (1) Individual profit curve with black dot on maximum
-    print("Generating plot 1... ")
-    plot1(R, p, alpha, open_interest)
+    # # (1) Individual profit curve with black dot on maximum
+    # print("Generating plot 1... ")
+    # plot1(R, p, alpha, open_interest)
 
-    # (2) Side by side fees to open interest for large vs small varying n
-    print("Generating plot 2... ")
-    plot2(R, p, alpha, open_interest)
+    # # (2) Side by side fees to open interest for large vs small varying n
+    # print("Generating plot 2... ")
+    # plot2(R, p, alpha, open_interest)
 
-    # (3) Error of closed form with and without whales
-    print("Generating plot 3... ")
-    plot3(R, p, alpha, open_interest)
+    # # (3) Error of closed form with and without whales
+    # print("Generating plot 3... ")
+    # plot3(R, p, alpha, open_interest)
 
-    # (4) Bar chart sum of fees for increasing whale size
-    print("Generating plot 4... ")
-    plot4(R, p, alpha, open_interest)
+    # # (4) Bar chart sum of fees for increasing whale size
+    # print("Generating plot 4... ")
+    # plot4(R, p, alpha, open_interest)
 
-    # (5) Profit vs open interest with and without whales
-    print("Generating plot 5... ")
-    plot5(R, p, alpha, open_interest)
+    # # (5) Profit vs open interest with and without whales
+    # print("Generating plot 5... ")
+    # plot5(R, p, alpha, open_interest)
     
-    # (6) Plot normal G and plot where G = 0
-    print("Generating plot 6... ")
-    plot6(R, p, alpha, open_interest)
+    # # (6) Plot normal G and plot where G = 0
+    # print("Generating plot 6... ")
+    # plot6(R, p, alpha, open_interest)
     
-    # (7) Plot actual data (price, fees, open interest)
-    print("Generating plot 7... ")
-    plot7()
+    # # (7) Plot actual data (price, fees, open interest)
+    # print("Generating plot 7... ")
+    # plot7()
 
     # (8) Plot of our predictions vs actual data
     print("Generating plot 8... ")

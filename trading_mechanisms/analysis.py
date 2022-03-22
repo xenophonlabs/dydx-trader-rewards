@@ -118,8 +118,10 @@ def plot5(R, p, alpha, open_interest):
     
     _, profit_fast = setup(R, p, analysis=True)
 
+    n = 3_000
+
     # Without whales
-    d_mkt, f_mkt = find_equilibrium(open_interest, n=1000, R=R, p=p, alpha=alpha)
+    d_mkt, f_mkt = find_equilibrium(open_interest, n=n, R=R, p=p, alpha=alpha)
     mkt_score = cur_mkt_score(d_mkt, f_mkt)
     T_mkt = mkt_score - f_mkt**0.7 * d_mkt**0.3
     profits = profit_fast(f_mkt, d_mkt, T_mkt) * 100
@@ -133,7 +135,7 @@ def plot5(R, p, alpha, open_interest):
 
     # With whales
     d_mkt, f_mkt = find_equilibrium(open_interest, \
-        n=1000, R=R, p=p, alpha=alpha, num_whales=10, whale_alpha=100)
+        n=n, R=R, p=p, alpha=alpha, num_whales=10, whale_alpha=100)
     mkt_score = cur_mkt_score(d_mkt, f_mkt)
     T_mkt = mkt_score - f_mkt**0.7 * d_mkt**0.3
     profits = profit_fast(f_mkt, d_mkt, T_mkt) * 100
@@ -242,9 +244,9 @@ def main():
     This creates all the tables and plot for our analysis.
     """
     R = 3_835_616
-    p = 10
+    p = 5.5
     alpha = 0.01
-    open_interest = 150_000_000
+    open_interest = 1_500_000_000
 
     # (1) Individual profit curve with black dot on maximum
     print("Generating plot 1... ")

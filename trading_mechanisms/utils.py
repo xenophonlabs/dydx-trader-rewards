@@ -136,7 +136,7 @@ def find_equilibrium(D, n=1000, R=3_835_616, p=10, alpha=.01, num_whales=0, whal
     check_equilibrium(d_mkt, f_mkt, profit_prime_fast)
     return d_mkt, f_mkt
 
-def find_equilibrium_stk(D, n=1000, R=3_835_616, p=10, alpha=.01, G=5_000, num_whales=0, whale_alpha=1):
+def find_equilibrium_stk(D, n=1000, R=3_835_616, p=10, alpha=.01, G=25_000_000, num_whales=0, whale_alpha=1):
     """
     Find Nash equilibrium given conditions specified by input parameters.
 

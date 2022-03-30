@@ -16,8 +16,26 @@ To simulate a trading rewards epoch use the `find_equilibrium(...)` function wit
 * `num_whales` is the number of market whales to generate.
 * `whale_alpha` is the weight for each whale in the Dirichlet probability density function.
 
-To simulate the Nash equilibrium fee vector for epoch 3, for example, we would run:
+To simulate the Nash equilibrium fee vector for epoch 3, for example, we would run the following.
 
+```python
+find_equilibrium(
+    D=1000000000,
+    R=3835616,
+    n=8502,
+    p=5.50, 
+    alpha=0.01, 
+    num_whales=10,
+    whale_alpha=200
+)
 ```
-find_equilibrium(200980039.716, R=3835616, n=8502, p=18.849, alpha=0.01, num_whales=10, whale_alpha=100)
+
+For users to optimize their own trading rewards, they can use the `run.py` script as follows (for mac/linux).
+
+```bash
+$ bash build.sh
+$ source venv/bin/activate
+$ python3 trading_mechanisms/run.py -D 1000000000 -p 5.5 -n 100 -d 100_000
 ```
+
+Users can change the parameters to reflect their own account open interest through the `-d` argument.

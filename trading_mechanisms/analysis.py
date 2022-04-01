@@ -242,7 +242,7 @@ def plot9(open_interest, R, alpha):
 def plot10(open_interest, R, p, alpha):
     fig, ax = plt.subplots(1, 1, figsize=(10, 5))
 
-    a_param_values = [0.1, 0.3, 0.5, 0.7, 0.9][2:]
+    a_param_values = [0.1, 0.3, 0.5, 0.7, 0.9, .99][2:]
     sums = []
     for a_param_value in a_param_values:
         _, f_mkt = find_equilibrium_a(a_param_value, open_interest, n=1000, R=R, alpha=alpha, p=p, num_whales=10, whale_alpha=100)
@@ -256,7 +256,7 @@ def plot10(open_interest, R, p, alpha):
     ax.plot(a_ticks, y, color="red", label="aRp")
 
     ax.legend()
-    ax.set_title('Fees Paid by `a` parameter')
+    ax.set_title(f'Fees Paid by `a` parameter (D={open_interest})')
     ax.set_ylabel('Fees Paid')
     ax.set_xlabel('`a` parameter')
 
@@ -271,7 +271,7 @@ def main():
     R = 3_835_616
     p = 5.5
     alpha = 0.003
-    open_interest = 1_500_000_000
+    open_interest = 150_000_000
 
     # # (1) Individual profit curve with black dot on maximum
     # print("Generating plot 1... ")

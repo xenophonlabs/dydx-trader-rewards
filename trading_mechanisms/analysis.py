@@ -239,50 +239,79 @@ def plot9(open_interest, R, alpha):
     fig.savefig(PATH + "plot9.png")
     return
 
+def plot10(open_interest, R, p, alpha):
+    fig, ax = plt.subplots(1, 1, figsize=(10, 5))
+
+    a_param_values = [0.1, 0.3, 0.5, 0.7, 0.9][2:]
+    sums = []
+    for a_param_value in a_param_values:
+        _, f_mkt = find_equilibrium_a(a_param_value, open_interest, n=1000, R=R, alpha=alpha, p=p, num_whales=10, whale_alpha=100)
+        sums.append(sum(f_mkt))
+
+    ax.scatter(a_param_values, sums, label="Sum of Fees paid")
+    ax.set_xticks(a_param_values)
+
+    a_ticks = np.linspace(min(a_param_values), max(a_param_values), 100)
+    y = a_ticks * R * p
+    ax.plot(a_ticks, y, color="red", label="aRp")
+
+    ax.legend()
+    ax.set_title('Fees Paid by `a` parameter')
+    ax.set_ylabel('Fees Paid')
+    ax.set_xlabel('`a` parameter')
+
+    fig.savefig(PATH + "plot10.png")
+    return
+
+
 def main():
     """
     This creates all the tables and plot for our analysis.
     """
     R = 3_835_616
     p = 5.5
-    alpha = 0.01
+    alpha = 0.003
     open_interest = 1_500_000_000
 
-    # (1) Individual profit curve with black dot on maximum
-    print("Generating plot 1... ")
-    plot1(R, p, alpha, open_interest)
+    # # (1) Individual profit curve with black dot on maximum
+    # print("Generating plot 1... ")
+    # plot1(R, p, alpha, open_interest)
 
-    # (2) Side by side fees to open interest for large vs small varying n
-    print("Generating plot 2... ")
-    plot2(R, p, alpha, open_interest)
+    # # (2) Side by side fees to open interest for large vs small varying n
+    # print("Generating plot 2... ")
+    # plot2(R, p, alpha, open_interest)
 
-    # (3) Error of closed form with and without whales
-    print("Generating plot 3... ")
-    plot3(R, p, alpha, open_interest)
+    # # (3) Error of closed form with and without whales
+    # print("Generating plot 3... ")
+    # plot3(R, p, alpha, open_interest)
 
-    # (4) Bar chart sum of fees for increasing whale size
-    print("Generating plot 4... ")
-    plot4(R, p, alpha, open_interest)
+    # # (4) Bar chart sum of fees for increasing whale size
+    # print("Generating plot 4... ")
+    # plot4(R, p, alpha, open_interest)
 
-    # (5) Profit vs open interest with and without whales
-    print("Generating plot 5... ")
-    plot5(R, p, alpha, open_interest)
+    # # (5) Profit vs open interest with and without whales
+    # print("Generating plot 5... ")
+    # plot5(R, p, alpha, open_interest)
     
-    # (6) Plot normal G and plot where G = 0
-    print("Generating plot 6... ")
-    plot6(R, p, alpha, open_interest)
+    # # (6) Plot normal G and plot where G = 0
+    # print("Generating plot 6... ")
+    # plot6(R, p, alpha, open_interest)
     
-    # (7) Plot actual data (price, fees, open interest)
-    print("Generating plot 7... ")
-    plot7()
+    # # (7) Plot actual data (price, fees, open interest)
+    # print("Generating plot 7... ")
+    # plot7()
 
-    # (8) Plot of our predictions vs actual data
-    print("Generating plot 8... ")
-    plot8(alpha)
+    # # (8) Plot of our predictions vs actual data
+    # print("Generating plot 8... ")
+    # plot8(alpha)
 
-    # (9) Plot of our predictions vs actual data
-    print("Generating plot 9... ")
-    plot9(open_interest, R, alpha)
+    # # (9) Plot of our predictions vs actual data
+    # print("Generating plot 9... ")
+    # plot9(open_interest, R, alpha)
+
+    # (10) Plot of our predictions vs actual data
+    print("Generating plot 10... ")
+    plot10(open_interest, R, p, alpha)
     
     return
 

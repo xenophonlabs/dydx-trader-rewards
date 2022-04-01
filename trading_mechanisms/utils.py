@@ -136,6 +136,88 @@ def find_equilibrium(D, n=1000, R=3_835_616, p=10, alpha=.01, num_whales=0, whal
     check_equilibrium(d_mkt, f_mkt, profit_prime_fast)
     return d_mkt, f_mkt
 
+def setup_a(a, R, p, analysis=False):
+    """
+    Generate the Sympy objects that perform the computation 
+    of the profit function and its derivatives. 
+    """
+    f = sp.Symbol('f')
+    d = sp.Symbol('d')
+    T = sp.Symbol('T')
+
+    profit = R * p * d**(1-a) * f**(a) / (T + d**(1-a) * f**a) - f  
+
+    profit_prime = sp.diff(profit, f)
+    profit_prime_prime = sp.diff(profit_prime, f)
+
+    profit_prime_fast = sp.lambdify([f, d, T], profit_prime, "numpy")
+    profit_prime_prime_fast = sp.lambdify([f, d, T], profit_prime_prime, "numpy")
+
+    if analysis:
+        return profit, sp.lambdify([f, d, T], profit, "numpy")
+    
+    return profit_prime_fast, profit_prime_prime_fast
+
+def cur_mkt_score_a(a, ds, fs):
+    """
+    Given a bunch of participants' open-interests and fees,
+    calculate the total current market score.
+    """
+    total = 0
+    for d, f in zip(ds, fs):
+        total += (d**(1-a)) * (f**(a))
+    return total
+
+def walk_a(a, alpha, d_mkt, f_mkt, profit_prime_fast, profit_prime_prime_fast):
+    """
+    Perform a single iteration of Newton's method on the fees 
+    vector F.
+    """
+    mkt_score = cur_mkt_score_a(a, d_mkt, f_mkt)
+    T_mkt = mkt_score - f_mkt**a * d_mkt**(1-a)
+
+    d1 = profit_prime_fast(f_mkt, d_mkt, T_mkt)
+    d2 = profit_prime_prime_fast(f_mkt, d_mkt, T_mkt)
+    new_f_mkt = f_mkt - alpha * d1 / d2
+
+    return new_f_mkt
+
+def find_equilibrium_a(a, D, n=1000, R=3_835_616, p=10, alpha=.01, num_whales=0, whale_alpha=1):
+    """
+    Find Nash equilibrium given conditions specified by input parameters.
+
+    Warning: If learning rate is too small or fees vector is initialized at very high amounts, 
+    Newton's method can update fees as negative values. This will crash the algorithm. 
+    To avoid this, lower the learning rate or instantiate the fees vector at smaller amounts.
+    """
+    profit_prime_fast, profit_prime_prime_fast = setup_a(a, R, p)
+
+    # d_mkt = np.random.exponential(scale=(D/n), size=n)
+    d_mkt = get_mkt(D, n, num_whales, whale_alpha)
+    f_mkt = np.random.rand(n)*((1/25) * D)/n
+
+    # simulate_market_optimal_fee_discovery, running until convergence
+    rmses = [] # the distances between fees on successive iterations of the algorithm; should tend to 0 as f_mkt convergest
+    while (rmses==[]) or (rmses[-1] > 10**-10):
+        new_f_mkt = walk_a(a, alpha, d_mkt, f_mkt, profit_prime_fast, profit_prime_prime_fast)
+        rmses.append(dist(new_f_mkt, f_mkt))
+        f_mkt = new_f_mkt
+    
+    check_equilibrium_a(a, d_mkt, f_mkt, profit_prime_fast)
+    return d_mkt, f_mkt
+
+def check_equilibrium_a(a, d_mkt, f_mkt, profit_prime_fast):
+    """
+    Verify that evey trader's f_k minimizes their profit curve.
+    """
+    mkt_score = cur_mkt_score_a(a, d_mkt, f_mkt)
+    T_mkt = mkt_score - f_mkt**a * d_mkt**(1-a)
+    err = profit_prime_fast(f_mkt, d_mkt, T_mkt)
+    if not np.all((err <= 10e-2)):
+        raise Exception("Newton's method did not find an equilibrium.")
+    return True
+
+
 def find_equilibrium_stk(D, n=1000, R=3_835_616, p=10, alpha=.01, G=25_000_000, num_whales=0, whale_alpha=1):
     """
     Find Nash equilibrium given conditions specified by input parameters.
@@ -160,6 +242,8 @@ def find_equilibrium_stk(D, n=1000, R=3_835_616, p=10, alpha=.01, G=25_000_000, 
     
     check_equilibrium_stk(d_mkt, f_mkt, g_mkt, profit_prime_fast)
     return d_mkt, f_mkt, g_mkt
+
+
 
 ###############
 ### TESTING ###

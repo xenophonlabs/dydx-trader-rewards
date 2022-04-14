@@ -17,6 +17,9 @@ def cur_mkt_score(ds, fs):
         total += (d**.3) * (f**.7)
     return total
 
+def single_mkt_score_stk(d, f, g):
+    return (d**.28) * (f**.67) * (g**0.05)
+
 def cur_mkt_score_stk(ds, fs, gs):
     """
     Given a bunch of participants' open-interests and fees,
@@ -24,7 +27,7 @@ def cur_mkt_score_stk(ds, fs, gs):
     """
     total = 0
     for d, f, g in zip(ds, fs, gs):
-        total += (d**.28) * (f**.67) * (g**0.05)
+        total += single_mkt_score_stk(d, f, g)
     return total
 
 def setup(R, p, analysis=False):

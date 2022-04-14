@@ -2,7 +2,7 @@ import argparse
 
 import numpy as np
 
-from utils import find_equilibrium_stk
+from utils import find_equilibrium_stk, cur_mkt_score_stk, single_mkt_score_stk
 
 def parse_args():
     parser = argparse.ArgumentParser("Get Nash-equilibrium fees to pay throughout an epoch.")
@@ -83,6 +83,14 @@ def parse_args():
     )
 
     parser.add_argument(
+        "-g",
+        type=float,
+        help="The amount of DYDX staked by the person running the simulation.",
+        required=False,
+        default=10,
+    )
+
+    parser.add_argument(
         "--num-trials",
         type=int,
         help="The number of trials to run the algorithm. Larger number means longer run time and more precise results.",
@@ -105,6 +113,7 @@ def estimate_optimal_fees():
     args = parse_args()
 
     f_opts = []
+    opt_rewards_revenues = []
     for i in range(args["num_trials"]):
         print(f"Beginning trial {i+1} of {args['num_trials']}.")
         d_mkt, f_mkt, g_mkt = find_equilibrium_stk(
@@ -123,14 +132,26 @@ def estimate_optimal_fees():
             d_mkt
         )
 
+        # compute optimal fees
         f_ratio = f_mkt[closest_oi_index]/d_mkt[closest_oi_index] # ratios of fees to open interest
-        f_opts.append(args["d"] * f_ratio)
+        f_opt = args["d"] * f_ratio
+        f_opts.append(f_opt)
+
+        # compute estimate of trader rewards
+        individual_mkt_score = single_mkt_score_stk(args["d"], f_opt, args["g"])
+        total_mkt_score = cur_mkt_score_stk(d_mkt, f_mkt, g_mkt)
+        opt_rewards_revenues.append((individual_mkt_score / total_mkt_score) * args["R"] * args["p"])
+        
 
     avg_opt_fee = np.mean(f_opts)
+    avg_opt_rewards_revenue = np.mean(opt_rewards_revenues)
     std_opt_fee = np.std(f_opts)
 
     print(f"Total fees to pay this epoch: ${avg_opt_fee:<.2f}.")
     print(f"Standard deviation of optimal fees paid: ${std_opt_fee:<.2f}")
+    print(f"Total reward revenue (USD): ${avg_opt_rewards_revenue:<.2f}")
+    print(f"Average Profit (% of fees paid): {100*(avg_opt_rewards_revenue - avg_opt_fee)/avg_opt_fee}%")
+
 
 if __name__ == "__main__":
     estimate_optimal_fees()
